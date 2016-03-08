@@ -1,18 +1,22 @@
 package com.ifreeshare.servlet;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.hadoop.yarn.webapp.view.HtmlPage.Page;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.ifreeshare.entity.Document;
 import com.ifreeshare.service.DocumentService;
 import com.ifreeshare.util.IoUtil;
+import com.ifreeshare.util.Pages;
 
 public class MD5CheckServlet extends HttpServlet {
 	
@@ -31,7 +35,12 @@ public class MD5CheckServlet extends HttpServlet {
 		try {
 			String md5 = req.getParameter("fileMd5");
 			Document doc = documentService.get(md5);
-			if(doc.getMd5() != null ){
+			
+			Map<String, Object> filter = new HashMap<String,Object>();
+			
+			
+			Pages<Document>  page = documentService.list(null, filter, 100);
+			if(page.getList().size() > 0){
 				json.put("result", "exist");
 			}else{
 				json.put("result", "notFound");
